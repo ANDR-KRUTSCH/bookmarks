@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load thumbnail %}
+
+{% block title %}{{ image.title }}{% endblock %}
+
+{% block content %}
+    <h1>{{ image.title }}</h1>
+    <a href="{{ image.image.url }}">
+        <img src="{% thumbnail image.image 300x0 %}" class="image-detail">    
+    </a>
+    {% with total_likes=image.users_like.count users_like=image.users_like.all %}
+        <div class="image-info">
+            <div>
+                <span class="count">
+                    <span class="total">{{ total_likes }}</span> like{{ total_likes|pluralize }}
+                </span>
+                <a href="#" data-id="{{ image.pk }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="like button">{% if request.user in users_like %}un{% endif %}like</a>
+            </div>
+            {{ image.description|linebreaks }}
+        </div>
+        <div class="image-likes">
+            {% for user in image.users_like.all %}
+                <div>
+                    {% if user.profile.photo %}
+                        <img src="{{ user.profile.photo.url }}">
+                    {% endif %}
+                    <p>{{ user.first_name|default:user.username }}</p>
+                </div>
+            {% empty %}
+                Nobody likes this image yet.
+            {% endfor %}
+        </div>
+    {% endwith %}
+{% endblock %}
+
+{% block domready %}
+    <script>
+        window.document.addEventListener('DOMContentLoaded', function(event) {
+            window.document.querySelector('.like').addEventListener('pointerdown', async function(event) {
+                event.preventDefault();
+
+                let formData = new FormData();
+                formData.append('id', this.dataset.id);
+                formData.append('action', this.dataset.action);
+
+                let response = await fetch("{% url 'images:like' %}", {
+                    mode: "same-origin",
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': window.csrftoken,
+                    },
+                    body: formData,
+                });
+
+                let data = await response.json();
+
+                if (data.status === 'ok') {
+                    let previousAction = this.dataset.action;
+
+                    let action = previousAction === 'like' ? 'unlike' : 'like';
+                    this.dataset.action = action;
+                    this.innerHTML = action;
+
+                    let likeCount = window.document.querySelector('span.count .total');
+                    let totalLikes = parseInt(likeCount.innerHTML);
+                    likeCount.innerHTML = previousAction === 'like' ? totalLikes + 1 : totalLikes - 1;
+                };
+            });
+        });
+    </script>
+{% endblock %}
