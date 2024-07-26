@@ -38,7 +38,7 @@ function bookmarkletLaunch() {
         image.addEventListener('pointerdown', function(event) {
             let image_selected = event.target;
             bookmarklet.style.display = 'none';
-            window.open(siteUrl + 'images/create/?url=' + encodeURIComponent(image_selected.src) + '&title=' + encodeURIComponent(window.document.title) + '_blank');
+            window.open(siteUrl + 'images/create/?url=' + encodeURIComponent(image_selected.src) + '&title=' + encodeURIComponent(window.document.title));
         });
     });
 };

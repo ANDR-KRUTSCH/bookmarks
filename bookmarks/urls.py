@@ -23,7 +23,8 @@ urlpatterns = [
     path(route='admin/', view=admin.site.urls),
     path(route='account/', view=include(arg='account.urls')),
     path(route='images/', view=include(arg='images.urls', namespace='images')),
-    path(route='social-auth/', view=include('social_django.urls', namespace='social')),
+    path(route='social-auth/', view=include(arg='social_django.urls', namespace='social')),
+    path(route='__debug__/', view=include(arg='debug_toolbar.urls')),
 ]
 
 if settings.DEBUG:

@@ -14,6 +14,8 @@ import os
 
 from pathlib import Path
 
+from django.urls import reverse_lazy
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -29,6 +31,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['mysite.com', 'localhost', '127.0.0.1']
 
+INTERNAL_IPS = ['127.0.0.1']
+
 
 # Application definition
 
@@ -36,10 +40,12 @@ INSTALLED_APPS = [
     # My apps
     'account.apps.AccountConfig',
     'images.apps.ImagesConfig',
+    'actions.apps.ActionsConfig',
     # Other apps
     'social_django',
     'django_extensions',
     'easy_thumbnails',
+    'debug_toolbar',
     # Default apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -50,6 +56,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -197,3 +204,19 @@ SOCIAL_AUTH_PIPELINE = (
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get('GOOGLE_OAUTH2_KEY')
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get('GOOGLE_OAUTH2_SECRET')
+
+
+# URL settings
+
+ABSOLUTE_URL_OVERRIDES = {
+    'auth.user': lambda user: reverse_lazy('user_detail', args=[user.username]),
+}
+
+
+# Redis settings
+
+REDIS_HOST = os.environ.get('REDIS_HOST')
+
+REDIS_PORT = os.environ.get('REDIS_PORT')
+
+REDIS_DB = os.environ.get('REDIS_DB')

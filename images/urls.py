@@ -9,4 +9,5 @@ urlpatterns = (
     path(route='detail/<int:pk>/<slug:slug>/', view=views.image_detail, name='detail'),
     path(route='like/', view=views.image_like, name='like'),
     path(route='', view=views.image_list, name='list'),
+    path(route='ranking/', view=views.image_ranking, name='ranking'),
 )

@@ -17,6 +17,7 @@ class Image(models.Model):
     description = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
     users_like = models.ManyToManyField(to=User, blank=True, related_name='images_liked')
+    total_likes = models.PositiveIntegerField(default=0)
 
     class Meta:
         ordering = (
@@ -26,6 +27,11 @@ class Image(models.Model):
             models.Index(
                 fields=(
                     '-created',
+                )
+            ),
+            models.Index(
+                fields=(
+                    '-total_likes',
                 )
             ),
         )
